@@ -1,12 +1,23 @@
 import SwiftUI
 
 struct ReadingSessionView: View {
-    @State private var currentPage: Int = 102
-    @State private var sessionNotes: String = "Reading notes here..."
+    @ObservedObject var bookStore: BookStore
+    let bookIndex: Int
+
     @Environment(\.presentationMode) var presentationMode
+    @State private var sessionNotes: String = "Reading notes here..."
+    @State private var currentPage: Int
+
+    init(bookStore: BookStore, bookIndex: Int) {
+        self.bookStore = bookStore
+        self.bookIndex = bookIndex
+        let book = bookStore.books[bookIndex]
+        self._currentPage = State(initialValue: Int(book.progress * Double(bookStore.books[bookIndex].totalPages)))
+    }
 
     var body: some View {
         VStack(spacing: 0) {
+            // Header
             HStack {
                 Button(action: {
                     presentationMode.wrappedValue.dismiss()
@@ -25,7 +36,6 @@ struct ReadingSessionView: View {
                     .foregroundColor(.white)
 
                 Spacer()
-
                 Color.clear.frame(width: 60)
             }
             .padding()
@@ -33,6 +43,7 @@ struct ReadingSessionView: View {
 
             ScrollView {
                 VStack(spacing: 20) {
+                    // Book info
                     HStack {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(Color(.systemGray5))
@@ -46,13 +57,13 @@ struct ReadingSessionView: View {
                             )
 
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Atomic Habits")
+                            Text(bookStore.books[bookIndex].title)
                                 .font(.headline)
 
-                            Text("James Clear")
+                            Text(bookStore.books[bookIndex].author)
                                 .foregroundColor(.gray)
 
-                            Text("May 2, 2025")
+                            Text("May 11, 2025")
                                 .foregroundColor(.gray)
                         }
 
@@ -63,9 +74,9 @@ struct ReadingSessionView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
 
+                    // Page tracking
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Current Page")
-                            .font(.headline)
+                        Text("Current Page").font(.headline)
 
                         HStack {
                             TextField("", value: $currentPage, formatter: NumberFormatter())
@@ -94,13 +105,13 @@ struct ReadingSessionView: View {
                             .cornerRadius(6)
                         }
 
-                        Slider(value: .constant(Float(currentPage) / 320))
+                        Slider(value: .constant(Float(currentPage) / Float(bookStore.books[bookIndex].totalPages)))
                             .accentColor(.orange)
 
                         HStack {
-                            Text("Last: pg 67").foregroundColor(.gray)
+                            Text("Now: pg \(currentPage)").foregroundColor(.gray)
                             Spacer()
-                            Text("Total: 320 pgs").foregroundColor(.gray)
+                            Text("Total: \(bookStore.books[bookIndex].totalPages) pgs").foregroundColor(.gray)
                         }
                     }
                     .padding()
@@ -108,6 +119,7 @@ struct ReadingSessionView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
 
+                    // Daily target (placeholder UI)
                     HStack(spacing: 0) {
                         VStack(alignment: .leading, spacing: 5) {
                             Text("Pages read today").font(.subheadline).foregroundColor(.gray)
@@ -129,6 +141,7 @@ struct ReadingSessionView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
 
+                    // Notes
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Session Notes").font(.headline)
 
@@ -151,7 +164,11 @@ struct ReadingSessionView: View {
             }
             .background(Color(.systemGray6))
 
+            // Save Button
             Button(action: {
+                var updatedBook = bookStore.books[bookIndex]
+                updatedBook.progress = Double(currentPage) / Double(updatedBook.totalPages)
+                bookStore.books[bookIndex] = updatedBook
                 presentationMode.wrappedValue.dismiss()
             }) {
                 HStack {
@@ -162,7 +179,6 @@ struct ReadingSessionView: View {
                 .padding()
                 .background(Color.orange)
                 .foregroundColor(.white)
-                .cornerRadius(0)
             }
         }
         .edgesIgnoringSafeArea(.top)

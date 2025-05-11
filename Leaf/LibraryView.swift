@@ -3,6 +3,8 @@ import SwiftUI
 struct LibraryView: View {
     @State private var selectedTab = 0
     @State private var searchText = ""
+    @ObservedObject var bookStore = BookStore()
+    @State private var showAddBook = false
 
     var body: some View {
         NavigationView {
@@ -32,10 +34,9 @@ struct LibraryView: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(0..<3) { _ in
-                            LibraryBookRow()
-                            Divider()
-                                .padding(.leading, 95)
+                        ForEach(bookStore.books) { book in
+                            LibraryBookRow(book: book)
+                            Divider().padding(.leading, 95)
                         }
                     }
                     .background(Color.white)
@@ -43,7 +44,9 @@ struct LibraryView: View {
 
                 Spacer()
 
-                Button(action: {}) {
+                Button(action: {
+                    showAddBook = true
+                }) {
                     HStack {
                         Image(systemName: "plus")
                         Text("Add New Book")
@@ -55,6 +58,9 @@ struct LibraryView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .padding()
+                }
+                .sheet(isPresented: $showAddBook) {
+                    AddBookView(books: $bookStore.books)
                 }
             }
             .background(Color(.systemGray6))
@@ -73,6 +79,8 @@ struct LibraryView: View {
 }
 
 struct LibraryBookRow: View {
+    let book: Book
+
     var body: some View {
         HStack(alignment: .top, spacing: 15) {
             RoundedRectangle(cornerRadius: 6)
@@ -87,13 +95,9 @@ struct LibraryBookRow: View {
                 )
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Atomic Habits")
-                    .font(.headline)
-
-                Text("James Clear")
-                    .foregroundColor(.gray)
-
-                Text("Self-Development")
+                Text(book.title).font(.headline)
+                Text(book.author).foregroundColor(.gray)
+                Text(book.category)
                     .font(.caption)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
@@ -101,19 +105,13 @@ struct LibraryBookRow: View {
                     .foregroundColor(.orange)
                     .cornerRadius(4)
 
-                Text("Page 67 of 320")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .padding(.top, 4)
-
-                ProgressView(value: 0.21)
+                ProgressView(value: book.progress)
                     .tint(Color.orange)
-                    .padding(.top, 2)
             }
 
             Spacer()
 
-            Text("21%")
+            Text("\(Int(book.progress * 100))%")
                 .font(.headline)
                 .foregroundColor(.gray)
         }
