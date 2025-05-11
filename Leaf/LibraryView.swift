@@ -3,7 +3,7 @@ import SwiftUI
 struct LibraryView: View {
     @State private var selectedTab = 0
     @State private var searchText = ""
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -15,11 +15,11 @@ struct LibraryView: View {
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
                 .background(Color.white)
-                
+
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
-                    
+
                     TextField("Search books...", text: $searchText)
                         .foregroundColor(.primary)
                 }
@@ -29,7 +29,7 @@ struct LibraryView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
                 .background(Color.white)
-                
+
                 ScrollView {
                     VStack(spacing: 0) {
                         ForEach(0..<3) { _ in
@@ -40,9 +40,9 @@ struct LibraryView: View {
                     }
                     .background(Color.white)
                 }
-                
+
                 Spacer()
-                
+
                 Button(action: {}) {
                     HStack {
                         Image(systemName: "plus")
@@ -51,7 +51,7 @@ struct LibraryView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.fromHex("4CAF50"))
+                    .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .padding()
@@ -68,7 +68,6 @@ struct LibraryView: View {
                         .foregroundColor(.white)
                 }
             }
-            .navigationBarColor(backgroundColor: UIColor(hexString: "4CAF50"), titleColor: .white)
         }
     }
 }
@@ -86,34 +85,34 @@ struct LibraryBookRow: View {
                         .frame(width: 30)
                         .foregroundColor(.gray)
                 )
-            
+
             VStack(alignment: .leading, spacing: 6) {
                 Text("Atomic Habits")
                     .font(.headline)
-                
+
                 Text("James Clear")
                     .foregroundColor(.gray)
-                
+
                 Text("Self-Development")
                     .font(.caption)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(Color.fromHex("E8F5E9"))
-                    .foregroundColor(Color.fromHex("4CAF50"))
+                    .background(Color.orange.opacity(0.2))
+                    .foregroundColor(.orange)
                     .cornerRadius(4)
-                
+
                 Text("Page 67 of 320")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.top, 4)
-                
+
                 ProgressView(value: 0.21)
-                    .tint(Color.fromHex("4CAF50"))
+                    .tint(Color.orange)
                     .padding(.top, 2)
             }
-            
+
             Spacer()
-            
+
             Text("21%")
                 .font(.headline)
                 .foregroundColor(.gray)
