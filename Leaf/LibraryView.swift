@@ -34,13 +34,14 @@ struct LibraryView: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(bookStore.books) { book in
-                            LibraryBookRow(book: book)
+                        ForEach($bookStore.books) { $book in
+                            LibraryBookRow(book: $book)
                             Divider().padding(.leading, 95)
                         }
                     }
                     .background(Color.white)
                 }
+
 
                 Spacer()
 
@@ -79,7 +80,7 @@ struct LibraryView: View {
 }
 
 struct LibraryBookRow: View {
-    let book: Book
+    @Binding var book: Book
 
     var body: some View {
         HStack(alignment: .top, spacing: 15) {
@@ -107,6 +108,13 @@ struct LibraryBookRow: View {
 
                 ProgressView(value: book.progress)
                     .tint(Color.orange)
+                
+                NavigationLink(destination: BookNotesView(book: $book)) {
+                    Text("Notes")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                }
+
             }
 
             Spacer()
