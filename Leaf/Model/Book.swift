@@ -10,4 +10,5 @@ struct Book: Identifiable, Codable {
     var status: String = "Want to Read"
     var notes: [String] = []
     let dateAdded: Date = Date()
+    var lastUpdated: Date = Date()
 }
