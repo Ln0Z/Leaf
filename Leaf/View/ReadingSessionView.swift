@@ -63,7 +63,7 @@ struct ReadingSessionView: View {
                             Text(bookStore.books[bookIndex].author)
                                 .foregroundColor(.gray)
 
-                            Text("May 11, 2025")
+                            Text(formattedDate(bookStore.books[bookIndex].dateAdded))
                                 .foregroundColor(.gray)
                         }
 
@@ -105,8 +105,19 @@ struct ReadingSessionView: View {
                             .cornerRadius(6)
                         }
 
-                        Slider(value: .constant(Float(currentPage) / Float(bookStore.books[bookIndex].totalPages)))
-                            .accentColor(.orange)
+                        Slider(
+                            value: Binding(
+                                get: {
+                                    Float(currentPage)
+                                },
+                                set: { newValue in
+                                    currentPage = Int(newValue)
+                                }
+                            ),
+                            in: 1...Float(bookStore.books[bookIndex].totalPages),
+                            step: 1
+                        )
+                        .accentColor(.orange)
 
                         HStack {
                             Text("Now: pg \(currentPage)").foregroundColor(.gray)
@@ -192,5 +203,10 @@ struct ReadingSessionView: View {
             }
         }
         .edgesIgnoringSafeArea(.top)
+    }
+    func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
     }
 }
