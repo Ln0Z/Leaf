@@ -4,29 +4,35 @@ struct StatsView: View {
     @StateObject private var viewModel = StatsViewModel()
 
     var body: some View {
-        NavigationView {
-            StatsContentView(viewModel: viewModel)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        HStack {
-                            Image(systemName: "chart.bar")
-                                .foregroundColor(.white)
-                            Text("Reading Stats")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                        }
+        NavigationStack {
+            GeometryReader { geometry in
+                StatsContentView(viewModel: viewModel)
+                    .padding(.vertical)
+                    .frame(width: geometry.size.width)
+                    .background(Color(.systemGray6))
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        Image(systemName: "chart.bar")
+                            .foregroundColor(.white)
+                        Text("Reading Stats")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
                     }
                 }
-                .onAppear {
-                    viewModel.bookProvider = {
-                        BookStore().books
-                    }
+            }
+            .onAppear {
+                viewModel.bookProvider = {
+                    BookStore().books
                 }
+            }
         }
     }
 }
+
 
 struct StatsContentView: View {
     @ObservedObject var viewModel: StatsViewModel

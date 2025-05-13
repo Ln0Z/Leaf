@@ -3,97 +3,138 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var bookStore = BookStore()
 
+    @State private var showReadingSession = false
+    @State private var selectedBookIndex: Int?
+    @State private var showSeeAll = false
+
     var body: some View {
-        NavigationView {
-            ScrollView {
-                ZStack(alignment: .top) {
-                    Color.orange
-                        .ignoresSafeArea()
-                        .frame(height: 200)
-
+        NavigationStack {
+            GeometryReader { geometry in
+                ScrollView {
                     VStack(spacing: 20) {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(Date(), formatter: DateFormatter.fullDate)
-                                .font(.subheadline)
-                                .foregroundColor(.white)
+                        ZStack(alignment: .leading) {
+                            Color.orange
+                                .frame(height: 200)
+                                .edgesIgnoringSafeArea(.top)
 
-                            Text("Welcome back to Leaf 🍂")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(Date(), formatter: DateFormatter.fullDate)
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+
+                                Text("Welcome back to Leaf 🍂")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                            }
+                            .padding()
                         }
-                        .padding(.horizontal)
 
-                        // Show ContinueReadingCard if there's at least 1 book
-                        if !bookStore.books.isEmpty {
+                        // Continue Reading
+                        let sortedBooks = bookStore.books
+                            .enumerated()
+                            .sorted { $0.element.lastUpdated > $1.element.lastUpdated }
+
+                        if !sortedBooks.isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Continue Reading")
+                                    .font(.headline)
+                                    .padding(.horizontal)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 16) {
+                                        ForEach(sortedBooks, id: \.element.id) { (index, _) in
+                                            EnhancedContinueReadingCard(bookStore: bookStore, bookIndex: index)
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        } else {
+                            Text("No books yet. Add one in the Library tab!")
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(.gray)
+                        }
+
+                        // Bookshelf Section
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                Text("My Bookshelf")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+
+                                Spacer()
+
+                                Button(action: {
+                                    showSeeAll = true
+                                }) {
+                                    Text("See All")
+                                        .font(.subheadline)
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                            .padding(.horizontal)
+
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 16) {
-                                    ForEach(bookStore.books.indices, id: \.self) { index in
-                                        EnhancedContinueReadingCard(bookStore: bookStore, bookIndex: index)
+                                HStack(spacing: 15) {
+                                    ForEach(bookStore.books) { book in
+                                        EnhancedBookCard(
+                                            title: book.title,
+                                            author: book.author,
+                                            progress: book.progress,
+                                            color: "orange"
+                                        )
                                     }
                                 }
                                 .padding(.horizontal)
                             }
-                        } else {
-                            Text("No books yet. Add one in the Library tab!")
-                                .padding()
-                                .foregroundColor(.gray)
                         }
-
-                        HStack {
-                            Text("My Bookshelf")
-                                .font(.title2)
-                                .fontWeight(.bold)
-
-                            Spacer()
-
-                            Button(action: {}) {
-                                Text("See All")
-                                    .font(.subheadline)
-                                    .foregroundColor(.orange)
-                            }
-                        }
-                        .padding(.horizontal)
-
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 15) {
-                                ForEach(bookStore.books) { book in
-                                    EnhancedBookCard(
-                                        title: book.title,
-                                        author: book.author,
-                                        progress: book.progress,
-                                        color: "orange"
-                                    )
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .padding(.top, 20)
+                    .padding(.top)
+                    .frame(width: geometry.size.width)
+                }
+                .background(Color(.systemGray6))
+            }
+            .sheet(isPresented: $showReadingSession) {
+                if let index = selectedBookIndex {
+                    ReadingSessionView(bookStore: bookStore, bookIndex: index)
                 }
             }
-            .background(Color(.systemGray6))
-            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showSeeAll) {
+                let sortedBooks = bookStore.books
+                    .sorted { $0.lastUpdated > $1.lastUpdated }
+
+                ContinueReadingListView(books: $bookStore.books) { selectedBook in
+                    if let index = bookStore.books.firstIndex(where: { $0.id == selectedBook.id }) {
+                        selectedBookIndex = index
+                        showReadingSession = true
+                        showSeeAll = false
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     HStack {
                         Image(systemName: "leaf.fill")
-                            .foregroundColor(.white)
+                            .foregroundColor(.orange)
                         Text("Leaf")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.orange)
                     }
                 }
             }
         }
     }
 }
+
 extension DateFormatter {
     static var fullDate: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateStyle = .full // "Tuesday, May 14, 2025"
+        formatter.dateStyle = .full
         return formatter
     }
 }
-

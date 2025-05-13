@@ -8,7 +8,7 @@ struct AddBookView: View {
     @StateObject private var viewModel = AddBookViewModel()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section(header: Text("Search for a Book")) {
                     TextField("Search by title, author, etc.", text: $viewModel.searchText)
@@ -62,17 +62,22 @@ struct AddBookView: View {
                             totalPages: viewModel.totalPages,
                             status: "Want to Read"
                         )
-
                         books.append(newBook)
                         presentationMode.wrappedValue.dismiss()
                     }
                     .disabled(viewModel.title.isEmpty || viewModel.author.isEmpty)
                 }
             }
+            .formStyle(.grouped)
             .navigationTitle("New Book")
-            .navigationBarItems(trailing: Button("Cancel") {
-                presentationMode.wrappedValue.dismiss()
-            })
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            }
         }
     }
 }
