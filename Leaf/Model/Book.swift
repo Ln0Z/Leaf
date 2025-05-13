@@ -16,7 +16,8 @@ struct Book: Identifiable, Codable, Equatable {
     var totalPages: Int
     var status: String = "Want to Read"
     var notes: [BookNote] = []
+
+    var completionDate: Date?
     let dateAdded: Date = Date()
     var lastUpdated: Date = Date()
 }
-
