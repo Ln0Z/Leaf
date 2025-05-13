@@ -8,6 +8,14 @@ struct Book: Identifiable, Codable {
     var progress: Double
     var totalPages: Int
     var status: String = "Want to Read"
-    var notes: [String] = []
+    //var notes: [String] = []
+    var notes: [BookNote] = []
+
     let dateAdded: Date = Date()
+}
+
+struct BookNote: Codable, Hashable {
+    var content: String
+    var date: Date
+    var tag: String
 }
