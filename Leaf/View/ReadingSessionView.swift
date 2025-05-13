@@ -143,7 +143,7 @@ struct ReadingSessionView: View {
                 Button(action: {
                     var updatedBook = bookStore.books[bookIndex]
                     let previousPage = Int(updatedBook.progress * Double(updatedBook.totalPages))
-                    let pagesRead = max(currentPage - previousPage, 0)
+                    let pagesRead = currentPage - previousPage
                     updatedBook.progress = Double(currentPage) / Double(updatedBook.totalPages)
                     updatedBook.lastUpdated = Date()
 

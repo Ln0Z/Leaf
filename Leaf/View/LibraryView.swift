@@ -7,24 +7,30 @@ struct LibraryView: View {
     @State private var showAddBook = false
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                pickerView
-                searchBar
-                bookList
-                Spacer()
-                addButton
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background(Color(.systemGray6))
-            .navigationTitle("My Library")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("My Library")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+        VStack(spacing: 10) {
+            NavigationStack {
+                VStack(spacing: 0) {
+                    pickerView
+                    searchBar
+                    bookList
+                    Spacer()
+                    addButton
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .background(Color(.systemGray6))
+                .navigationTitle("My Library")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "book")
+                                .foregroundColor(.orange)
+                            Text("My Library")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.orange)
+                        }
+                    }
                 }
             }
         }
@@ -162,4 +168,8 @@ struct LibraryBookRow: View {
         .background(Color.white)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+#Preview{
+    LibraryView()
 }
