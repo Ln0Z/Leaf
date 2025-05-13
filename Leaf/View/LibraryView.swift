@@ -68,8 +68,8 @@ struct LibraryView: View {
     private var bookList: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(filteredBooks().indices, id: \.self) { index in
-                    LibraryBookRow(book: $bookStore.books[index])
+                ForEach(filteredBooks(), id: \.id) { book in
+                    LibraryBookRow(book: binding(for: book))
                     Divider().padding(.leading, 95)
                 }
             }
@@ -112,6 +112,13 @@ struct LibraryView: View {
                 $0.author.localizedCaseInsensitiveContains(searchText)
             }
         }
+    }
+    
+    func binding(for book: Book) -> Binding<Book> {
+        guard let index = bookStore.books.firstIndex(where: { $0.id == book.id }) else {
+            fatalError("Book not found in store")
+        }
+        return $bookStore.books[index]
     }
 }
 
