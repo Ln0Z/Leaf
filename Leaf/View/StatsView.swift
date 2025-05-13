@@ -16,11 +16,11 @@ struct StatsView: View {
                 ToolbarItem(placement: .principal) {
                     HStack {
                         Image(systemName: "chart.bar")
-                            .foregroundColor(.white)
+                            .foregroundColor(.orange)
                         Text("Reading Stats")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .foregroundColor(.orange)
                     }
                 }
             }
