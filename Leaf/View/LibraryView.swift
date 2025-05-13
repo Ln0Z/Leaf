@@ -42,6 +42,7 @@ struct LibraryView: View {
                     .background(Color.white)
                 }
 
+
                 Spacer()
 
                 Button(action: {
@@ -93,7 +94,7 @@ struct LibraryView: View {
 }
 
 struct LibraryBookRow: View {
-    let book: Book
+    @Binding var book: Book
 
     var body: some View {
         HStack(alignment: .top, spacing: 15) {
@@ -121,6 +122,13 @@ struct LibraryBookRow: View {
 
                 ProgressView(value: book.progress)
                     .tint(Color.orange)
+                
+                NavigationLink(destination: BookNotesView(book: $book)) {
+                    Text("Notes")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                }
+
             }
 
             Spacer()
