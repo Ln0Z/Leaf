@@ -1,9 +1,11 @@
 import SwiftUI
 
 struct StatsView: View {
+    @StateObject private var viewModel = StatsViewModel()
+        
     var body: some View {
         NavigationView {
-            StatsContentView()
+            StatsContentView(viewModel: viewModel)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
@@ -14,6 +16,10 @@ struct StatsView: View {
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
+                        }        .onAppear {
+                            viewModel.bookProvider = {
+                                BookStore().books
+                            }
                         }
                     }
                 }
@@ -22,12 +28,15 @@ struct StatsView: View {
 }
 
 struct StatsContentView: View {
+    @ObservedObject var viewModel: StatsViewModel
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                StatsSummarySection()
-                WeeklyReadingSection()
-                ReadingGoalsSection()
+                Spacer()
+                StatsSummarySection(viewModel: viewModel)
+                Spacer()
+                Spacer()
+                WeeklyReadingSection(viewModel: viewModel)
             }
             .padding(.vertical)
         }
@@ -36,17 +45,20 @@ struct StatsContentView: View {
 }
 
 struct StatsSummarySection: View {
+    @ObservedObject var viewModel: StatsViewModel
+    
     var body: some View {
         HStack(spacing: 10) {
-            StatBox(value: "3", label: "day streak")
-            StatBox(value: "42", label: "pages this week")
-            StatBox(value: "4", label: "books in 2025")
+            StatBox(value: "\(viewModel.dayStreak)", label: "day streak")
+            StatBox(value: "\(viewModel.pagesThisWeek)", label: "pages this week")
+            StatBox(value: "\(viewModel.booksThisYear)", label: "books in 2025")
         }
         .padding(.horizontal)
     }
 }
 
 struct WeeklyReadingSection: View {
+    @ObservedObject var viewModel: StatsViewModel
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -58,13 +70,9 @@ struct WeeklyReadingSection: View {
             .padding(.horizontal)
 
             HStack(alignment: .bottom, spacing: 15) {
-                BarView(height: 0.8, day: "M")
-                BarView(height: 0.5, day: "T")
-                BarView(height: 0.2, day: "W")
-                BarView(height: 0.7, day: "T")
-                BarView(height: 0.4, day: "F")
-                BarView(height: 0.6, day: "S")
-                BarView(height: 0.5, day: "S")
+                ForEach(viewModel.weeklyBarData, id: \.day) { item in
+                    BarView(height: item.percent, day: String(item.day.prefix(1)), pages: item.pages)
+                }
             }
             .padding(.horizontal)
             .padding(.top, 10)
@@ -73,83 +81,6 @@ struct WeeklyReadingSection: View {
         .background(Color.white)
         .cornerRadius(12)
         .padding(.horizontal)
-    }
-}
-
-struct ReadingGoalsSection: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HStack {
-                Image(systemName: "target")
-                    .foregroundColor(.orange)
-                Text("Reading Goals")
-                    .font(.headline)
-            }
-            .padding(.horizontal)
-
-            ReadingChallengeCard()
-        }
-        .padding(.vertical)
-        .background(Color.white)
-        .cornerRadius(12)
-        .padding(.horizontal)
-    }
-}
-
-struct ReadingChallengeCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("2025 Reading Challenge")
-                .font(.title3)
-                .fontWeight(.bold)
-
-            Text("24 books")
-                .font(.title2)
-                .fontWeight(.bold)
-
-            ProgressWithCountView()
-
-            HStack {
-                Text("4 of 24 books completed")
-                    .foregroundColor(.gray)
-
-                Spacer()
-
-                Text("On track")
-                    .foregroundColor(.orange)
-                    .fontWeight(.medium)
-            }
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(10)
-        .padding(.horizontal)
-    }
-}
-
-struct ProgressWithCountView: View {
-    var body: some View {
-        HStack {
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color(.systemGray5))
-                    .frame(height: 8)
-
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.orange)
-                    .frame(width: 100, height: 8)
-            }
-
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(0.2))
-                    .frame(width: 40, height: 40)
-
-                Text("4")
-                    .font(.headline)
-                    .foregroundColor(.orange)
-            }
-        }
     }
 }
 
@@ -178,19 +109,31 @@ struct StatBox: View {
 struct BarView: View {
     let height: CGFloat
     let day: String
+    let pages: Int
 
     var body: some View {
-        VStack(spacing: 8) {
-            Spacer()
+        VStack(spacing: 4) {
+            Text("\(pages)")
+                .font(.caption2)
+                .foregroundColor(.gray)
 
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color.orange)
-                .frame(width: 30, height: height * 150)
+            ZStack(alignment: .bottom) {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 150)
+
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.orange)
+                    .frame(width: 30, height: max(height * 150, 1))
+            }
 
             Text(day)
                 .font(.caption)
                 .foregroundColor(.gray)
         }
-        .frame(height: 180)
     }
+}
+
+#Preview{
+    StatsView()
 }

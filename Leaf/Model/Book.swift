@@ -9,4 +9,5 @@ struct Book: Identifiable, Codable {
     var totalPages: Int
     var status: String = "Want to Read"
     var notes: [String] = []
+    var completionDate: Date?
 }

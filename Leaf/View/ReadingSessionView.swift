@@ -166,11 +166,13 @@ struct ReadingSessionView: View {
 
             Button(action: {
                 var updatedBook = bookStore.books[bookIndex]
+                let previousPage = Int(updatedBook.progress * Double(updatedBook.totalPages))
+                let pagesRead = max(currentPage - previousPage, 0)
                 updatedBook.progress = Double(currentPage) / Double(updatedBook.totalPages)
 
-                // Automatically update status based on progress
                 if updatedBook.progress == 1.0 {
                     updatedBook.status = "Finished"
+                    updatedBook.completionDate = Date()
                 } else if updatedBook.progress > 0 {
                     updatedBook.status = "Reading"
                 } else {
@@ -178,6 +180,14 @@ struct ReadingSessionView: View {
                 }
 
                 bookStore.books[bookIndex] = updatedBook
+
+                let newEntry: [String: Any] = ["date": Date(), "pages": pagesRead]
+                var sessions = UserDefaults.standard.array(forKey: "readingSessions") as? [[String: Any]] ?? []
+                sessions.append(newEntry)
+                UserDefaults.standard.set(sessions, forKey: "readingSessions")
+
+                NotificationCenter.default.post(name: .didLogReading, object: nil)
+
                 presentationMode.wrappedValue.dismiss()
             }) {
 
@@ -193,4 +203,8 @@ struct ReadingSessionView: View {
         }
         .edgesIgnoringSafeArea(.top)
     }
+}
+
+extension Notification.Name {
+    static let didLogReading = Notification.Name("didLogReading")
 }
