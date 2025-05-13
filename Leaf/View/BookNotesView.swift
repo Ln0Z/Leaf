@@ -6,6 +6,8 @@ struct BookNotesView: View {
     @State private var selectedTag = "Thought"
     @State private var selectedFilter = "All"
 
+    @Environment(\.dismiss) var dismiss
+
     let tags = ["All", "Thought", "Quote", "Reminder"]
 
     var body: some View {
@@ -16,6 +18,7 @@ struct BookNotesView: View {
                 .padding(.top)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
+            // Tag filter control
             Picker("Filter", selection: $selectedFilter) {
                 ForEach(tags, id: \.self) { tag in
                     Text(tag)
@@ -24,6 +27,7 @@ struct BookNotesView: View {
             .pickerStyle(SegmentedPickerStyle())
             .padding(.bottom)
 
+            // Notes list
             if filteredNotes().isEmpty {
                 Text("No notes for selected tag.")
                     .foregroundColor(.gray)
@@ -74,36 +78,60 @@ struct BookNotesView: View {
 
             Divider().padding(.vertical)
 
-            VStack {
-                TextField("Type a new note...", text: $newNote)
-                    .padding(10)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+            // Add new note section
+            VStack(alignment: .leading) {
+                TextField("Type a new note...", text: $newNote, onCommit: {
+                    addNote()
+                })
+                .padding(10)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
 
-                Picker("Tag", selection: $selectedTag) {
-                    ForEach(tags.dropFirst(), id: \.self) {
-                        Text($0)
+                // Capsule-style tag picker
+                HStack {
+                    ForEach(tags.dropFirst(), id: \.self) { tag in
+                        Text(tag)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(selectedTag == tag ? tagColor(for: tag) : Color(.systemGray5))
+                            .foregroundColor(selectedTag == tag ? .white : .primary)
+                            .cornerRadius(20)
+                            .onTapGesture {
+                                withAnimation { selectedTag = tag }
+                            }
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
                 .padding(.vertical)
             }
 
             Button(action: addNote) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
-                    Text("Add Note")
+                    Text("Add \(selectedTag)")
                         .fontWeight(.medium)
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.orange)
+                .background(tagColor(for: selectedTag))
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
             .disabled(newNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .padding()
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Helpers
@@ -144,4 +172,6 @@ struct BookNotesView: View {
         }
     }
 }
+
+
 
