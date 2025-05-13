@@ -14,9 +14,7 @@ struct ContentView: View {
                 }
                 .tag(0)
             
-            VStack {
-                LibraryView()
-            }
+            LibraryView()
             .tabItem {
                 Image(systemName: selectedTab == 1 ? "book.fill" : "book")
                 Text("Library")
