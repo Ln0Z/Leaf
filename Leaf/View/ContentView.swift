@@ -29,13 +29,6 @@ struct ContentView: View {
                     Text("Stats")
                 }
                 .tag(2)
-            
-            ProfileView()
-                .tabItem {
-                    Image(systemName: selectedTab == 3 ? "person.fill" : "person")
-                    Text("Profile")
-                }
-                .tag(3)
         }
         .accentColor(Color.green)
         .onAppear() {

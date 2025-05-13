@@ -13,6 +13,8 @@ class AddBookViewModel: ObservableObject {
     @Published var author: String = ""
     @Published var category: String = ""
     @Published var totalPages: Int = 0
+    @Published var status: String = "Want to Read"
+
 
     func searchBooks() {
         guard let encodedQuery = searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),

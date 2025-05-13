@@ -164,13 +164,23 @@ struct ReadingSessionView: View {
             }
             .background(Color(.systemGray6))
 
-            // Save Button
             Button(action: {
                 var updatedBook = bookStore.books[bookIndex]
                 updatedBook.progress = Double(currentPage) / Double(updatedBook.totalPages)
+
+                // Automatically update status based on progress
+                if updatedBook.progress == 1.0 {
+                    updatedBook.status = "Finished"
+                } else if updatedBook.progress > 0 {
+                    updatedBook.status = "Reading"
+                } else {
+                    updatedBook.status = "Want to Read"
+                }
+
                 bookStore.books[bookIndex] = updatedBook
                 presentationMode.wrappedValue.dismiss()
             }) {
+
                 HStack {
                     Image(systemName: "bookmark.fill")
                     Text("Save Reading Session").fontWeight(.medium)
