@@ -7,7 +7,7 @@ struct LibraryView: View {
     @State private var showAddBook = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 pickerView
                 searchBar
@@ -15,6 +15,7 @@ struct LibraryView: View {
                 Spacer()
                 addButton
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color(.systemGray6))
             .navigationTitle("My Library")
             .navigationBarTitleDisplayMode(.inline)
@@ -127,8 +128,12 @@ struct LibraryBookRow: View {
                 )
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(book.title).font(.headline)
-                Text(book.author).foregroundColor(.gray)
+                Text(book.title)
+                    .font(.headline)
+
+                Text(book.author)
+                    .foregroundColor(.gray)
+
                 Text(book.category)
                     .font(.caption)
                     .padding(.horizontal, 10)
@@ -155,5 +160,6 @@ struct LibraryBookRow: View {
         }
         .padding()
         .background(Color.white)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

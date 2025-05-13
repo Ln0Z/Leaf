@@ -17,27 +17,25 @@ struct ReadingSessionView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 8) {
-                HStack {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                        }
-                        .foregroundColor(.white)
+            HStack {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
                     }
-
-                    Spacer()
-
-                    Text("Log Reading Session")
-                        .font(.headline)
-                        .foregroundColor(.white)
-
-                    Spacer()
-                    Color.clear.frame(width: 60)
+                    .foregroundColor(.white)
                 }
+
+                Spacer()
+
+                Text("Log Reading Session")
+                    .font(.headline)
+                    .foregroundColor(.white)
+
+                Spacer()
+                Color.clear.frame(width: 60)
             }
             .padding()
             .background(Color.orange)
@@ -140,6 +138,8 @@ struct ReadingSessionView: View {
                 .cornerRadius(12)
                 .padding(.horizontal)
 
+                Spacer()
+
                 Button(action: {
                     var updatedBook = bookStore.books[bookIndex]
                     updatedBook.progress = Double(currentPage) / Double(updatedBook.totalPages)
@@ -167,11 +167,11 @@ struct ReadingSessionView: View {
                     .cornerRadius(12)
                     .padding(.horizontal)
                 }
+                .padding(.bottom, 20)
             }
-            .padding(.top)
+            .frame(maxHeight: .infinity)
             .background(Color(.systemGray6))
         }
-        .edgesIgnoringSafeArea(.top)
         .sheet(isPresented: $showNotesSheet) {
             BookNotesView(book: $bookStore.books[bookIndex])
         }
