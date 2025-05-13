@@ -2,7 +2,7 @@ import SwiftUI
 
 struct StatsView: View {
     @StateObject private var viewModel = StatsViewModel()
-        
+
     var body: some View {
         NavigationView {
             StatsContentView(viewModel: viewModel)
@@ -16,11 +16,12 @@ struct StatsView: View {
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
-                        }        .onAppear {
-                            viewModel.bookProvider = {
-                                BookStore().books
-                            }
                         }
+                    }
+                }
+                .onAppear {
+                    viewModel.bookProvider = {
+                        BookStore().books
                     }
                 }
         }
