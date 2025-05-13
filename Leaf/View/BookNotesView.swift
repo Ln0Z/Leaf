@@ -122,9 +122,9 @@ struct BookNotesView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
+                Button {
                     dismiss()
-                }) {
+                } label: {
                     HStack {
                         Image(systemName: "chevron.left")
                         Text("Back")
