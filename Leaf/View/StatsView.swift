@@ -2,21 +2,32 @@ import SwiftUI
 
 struct StatsView: View {
     var body: some View {
-        NavigationView {
-            StatsContentView()
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        HStack {
-                            Image(systemName: "chart.bar")
-                                .foregroundColor(.white)
-                            Text("Reading Stats")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
-                        }
+        NavigationStack {
+            GeometryReader { geometry in
+                ScrollView {
+                    VStack(spacing: 20) {
+                        StatsSummarySection()
+                        WeeklyReadingSection()
+                        ReadingGoalsSection()
+                    }
+                    .padding(.vertical)
+                    .frame(maxWidth: .infinity)
+                }
+                .background(Color(.systemGray6))
+                .frame(width: geometry.size.width)
+            }
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        Image(systemName: "chart.bar")
+                            .foregroundColor(.white)
+                        Text("Reading Stats")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
                     }
                 }
+            }
         }
     }
 }
