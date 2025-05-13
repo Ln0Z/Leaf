@@ -1,6 +1,6 @@
 import Foundation
 
-struct Book: Identifiable, Codable {
+struct Book: Identifiable, Codable, Equatable {
     let id = UUID()
     var title: String
     var author: String

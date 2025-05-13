@@ -95,7 +95,7 @@ struct HomeView: View {
                 let sortedBooks = bookStore.books
                     .sorted { $0.lastUpdated > $1.lastUpdated }
                 
-                ContinueReadingListView(books: sortedBooks) { selectedBook in
+                ContinueReadingListView(books: $bookStore.books) { selectedBook in
                     if let index = bookStore.books.firstIndex(where: { $0.id == selectedBook.id }) {
                         selectedBookIndex = index
                         showReadingSession = true
