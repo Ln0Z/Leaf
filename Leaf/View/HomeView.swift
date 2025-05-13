@@ -13,7 +13,7 @@ struct HomeView: View {
 
                     VStack(spacing: 20) {
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("Sunday, May 11")
+                            Text(Date(), formatter: DateFormatter.fullDate)
                                 .font(.subheadline)
                                 .foregroundColor(.white)
 
@@ -89,3 +89,11 @@ struct HomeView: View {
         }
     }
 }
+extension DateFormatter {
+    static var fullDate: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full // "Tuesday, May 14, 2025"
+        return formatter
+    }
+}
+

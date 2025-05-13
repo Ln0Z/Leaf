@@ -7,4 +7,5 @@ struct Book: Identifiable, Codable {
     var category: String
     var progress: Double
     var totalPages: Int
+    var status: String = "Want to Read"
 }

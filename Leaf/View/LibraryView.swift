@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LibraryView: View {
-    @State private var selectedTab = 0
+    @State private var selectedTab = 2
     @State private var searchText = ""
     @ObservedObject var bookStore = BookStore()
     @State private var showAddBook = false
@@ -34,7 +34,7 @@ struct LibraryView: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(bookStore.books) { book in
+                        ForEach(filteredBooks()) { book in
                             LibraryBookRow(book: book)
                             Divider().padding(.leading, 95)
                         }
@@ -73,6 +73,20 @@ struct LibraryView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                 }
+            }
+        }
+    }
+
+    func filteredBooks() -> [Book] {
+        let statusMap = ["Reading", "Finished", "Want to Read"]
+        let filteredByStatus = bookStore.books.filter { $0.status == statusMap[selectedTab] }
+
+        if searchText.isEmpty {
+            return filteredByStatus
+        } else {
+            return filteredByStatus.filter {
+                $0.title.localizedCaseInsensitiveContains(searchText) ||
+                $0.author.localizedCaseInsensitiveContains(searchText)
             }
         }
     }

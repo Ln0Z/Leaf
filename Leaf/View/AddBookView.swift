@@ -59,7 +59,8 @@ struct AddBookView: View {
                             author: viewModel.author,
                             category: viewModel.category,
                             progress: 0.0,
-                            totalPages: viewModel.totalPages
+                            totalPages: viewModel.totalPages,
+                            status: "Want to Read"
                         )
 
                         books.append(newBook)

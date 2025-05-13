@@ -37,10 +37,6 @@ struct EnhancedContinueReadingCard: View {
                     .cornerRadius(8)
             }
 
-            Text("📖 Every action you take is a vote for the person you wish to become.")
-                .font(.footnote)
-                .foregroundColor(.gray)
-
             Button(action: {
                 showReadingSession = true
             }) {
