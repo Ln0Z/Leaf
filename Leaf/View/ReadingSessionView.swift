@@ -178,6 +178,7 @@ struct ReadingSessionView: View {
             Button(action: {
                 var updatedBook = bookStore.books[bookIndex]
                 updatedBook.progress = Double(currentPage) / Double(updatedBook.totalPages)
+                updatedBook.lastUpdated = Date()
 
                 // Automatically update status based on progress
                 if updatedBook.progress == 1.0 {
